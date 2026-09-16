@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WalletAI - Carteira Inteligente</title>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; height: 100vh; }
+
+        .app-container { width: 100%; max-width: 480px; height: 90vh; background: var(--card-bg); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border); }
+
+        /* Header Estilo Banco */
+        .app-header { background: #0f172a; padding: 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+        .user-info h2 { font-size: 1.1rem; font-weight: 600; color: var(--text-main); }
+        .user-info p { font-size: 0.8rem; color: var(--text-muted); }
+        .badge-ai { background: rgba(16, 185, 129, 0.15); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; border: 1px solid var(--primary); }
+
+        /* Atalhos Rápidos (Ações de Banco) */
+        .quick-actions { display: flex; gap: 8px; padding: 12px 15px; background: rgba(15, 23, 42, 0.5); overflow-x: auto; border-bottom: 1px solid var(--border); }
+        .quick-actions::-webkit-scrollbar { display: none; }
+        .action-chip { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border); padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+        .action-chip:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+        /* Área de Chat / Extrato */
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 12px; line-height: 1.4; word-wrap: break-word; white-space: pre-wrap; font-size: 0.95rem; }
+        .message.user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .message.ai { background: #334155; color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #475569; }
+        .loading { font-style: italic; color: var(--text-muted); align-self: flex-start; font-size: 0.85rem; padding: 5px 10px; }
+
+        /* Rodapé / Input */
+        .chat-input-area { display: flex; padding: 15px; background: #0f172a; border-top: 1px solid var(--border); gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 12px 15px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; outline: none; color: var(--text-main); font-size: 0.95rem; }
+        .chat-input-area input:focus { border-color: var(--primary); }
+        .chat-input-area button { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .chat-input-area button:hover { background: var(--primary-dark); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Header -->
+    <div class="app-header">
+        <div class="user-info">
+            <h2>Olá, Laércio 👋</h2>
+            <p>Conta Inteligente</p>
+        </div>
+        <div class="badge-ai">Gemini AI Ativo</div>
+    </div>
+
+    <!-- Atalhos Rápidos para Comandos -->
+    <div class="quick-actions">
+        <div class="action-chip" onclick="enviarAtalho('Cadastre uma receita de salário no valor de 5000')">➕ Salário R$ 5000</div>
+        <div class="action-chip" onclick="enviarAtalho('Cadastre uma despesa de supermercado no valor de 150')">🛒 Supermercado R$ 150</div>
+        <div class="action-chip" onclick="enviarAtalho('Liste todas as minhas transacoes')">📋 Listar Extrato</div>
+    </div>
+
+    <!-- Mensagens -->
+    <div id="chatMessages" class="chat-messages">
+        <div class="message ai">Olá! Sou seu assistente financeiro virtual. Como posso ajudar com suas finanças hoje? Use os atalhos acima ou digite o que deseja.</div>
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input-area">
+        <input type="text" id="userInput" placeholder="Digite um comando (ex: Gastei 50 com almoço)..." autofocus onkeypress="handleKeyPress(event)">
+        <button onclick="enviarMensagem()">Enviar</button>
+    </div>
+</div>
+
+<script>
+    function enviarAtalho(texto) {
+        document.getElementById('userInput').value = texto;
+        enviarMensagem();
+    }
+
+    async function enviarMensagem() {
+        const input = document.getElementById('userInput');
+        const mensagem = input.value.trim();
+        if (!mensagem) return;
+
+        const chatMessages = document.getElementById('chatMessages');
+
+        // Mensagem do usuário
+        const userDiv = document.createElement('div');
+        userDiv.className = 'message user';
+        userDiv.textContent = mensagem;
+        chatMessages.appendChild(userDiv);
+
+        input.value = '';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Loading
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'loading';
+        loadingDiv.id = 'loadingIndicator';
+        loadingDiv.textContent = 'Processando transação com IA...';
+        chatMessages.appendChild(loadingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        try {
+            const response = await fetch(`/api/orcamento/comando?mensagem=${encodeURIComponent(mensagem)}`, {
+                method: 'POST'
+            });
+            const respostaTexto = await response.text();
+
+            document.getElementById('loadingIndicator').remove();
+
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'message ai';
+            aiDiv.textContent = respostaTexto;
+            chatMessages.appendChild(aiDiv);
+        } catch (error) {
+            document.getElementById('loadingIndicator').remove();
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'message ai';
+            errorDiv.style.color = '#f87171';
+            errorDiv.textContent = 'Erro ao processar requisição na API.';
+            chatMessages.appendChild(errorDiv);
+        }
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            enviarMensagem();
+        }
+    }
+</script>
+</body>
+</html>
