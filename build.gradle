@@ -1,9 +1,10 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '4.1.1'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '4.1.1'
+    id 'io.spring.dependency-management' version '1.1.4'
+    // Adicione esta linha abaixo para permitir que o Gradle baixe o Java 26 automaticamente no servidor:
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }
-
 group = 'com.exemplo'
 version = '0.0.1-SNAPSHOT'
 
