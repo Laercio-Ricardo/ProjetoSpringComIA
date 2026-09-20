@@ -3,138 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WalletAI - Carteira Inteligente</title>
+    <title>LaLáBank - Light Edition</title>
     <style>
-        :root {
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #f1f5f9; color: #1e293b; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; height: 100vh; }
+        /* Smartphone Frame Premium Light */
+        .phone-frame { width: 100%; max-width: 410px; height: 95vh; background: #ffffff; border-radius: 40px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12), inset 0 0 0 1px rgba(0, 0, 0, 0.05); position: relative; }
 
-        .app-container { width: 100%; max-width: 480px; height: 90vh; background: var(--card-bg); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border); }
+        /* Topbar Clean */
+        .app-topbar { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); padding: 22px 20px 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; }
+        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 44px; height: 44px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 1.15rem; color: #fff; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+        .user-info h3 { font-size: 1rem; color: #0f172a; font-weight: 600; letter-spacing: -0.2px; }
+        .user-info span { font-size: 0.72rem; color: #64748b; }
+        .account-badge { background: rgba(139, 92, 246, 0.1); color: #7c3aed; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; border: 1px solid rgba(139, 92, 246, 0.2); }
 
-        /* Header Estilo Banco */
-        .app-header { background: #0f172a; padding: 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-        .user-info h2 { font-size: 1.1rem; font-weight: 600; color: var(--text-main); }
-        .user-info p { font-size: 0.8rem; color: var(--text-muted); }
-        .badge-ai { background: rgba(16, 185, 129, 0.15); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; border: 1px solid var(--primary); }
+        /* Card de Saldo Elegante */
+        .account-card { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: #ffffff; padding: 24px; margin: 20px 16px 10px 16px; border-radius: 22px; box-shadow: 0 12px 30px rgba(99, 102, 241, 0.35); position: relative; overflow: hidden; }
+        .account-card::after { content: ''; position: absolute; top: -50px; right: -50px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%); border-radius: 50%; }
+        .balance-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: rgba(255, 255, 255, 0.85); font-weight: 500; }
+        .balance-value { font-size: 2.2rem; font-weight: 700; color: #ffffff; margin: 12px 0; letter-spacing: -0.5px; }
+        .account-details { font-size: 0.75rem; color: rgba(255, 255, 255, 0.85); border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 12px; margin-top: 6px; display: flex; justify-content: space-between; }
+        .account-details b { color: #ffffff; }
 
-        /* Atalhos Rápidos (Ações de Banco) */
-        .quick-actions { display: flex; gap: 8px; padding: 12px 15px; background: rgba(15, 23, 42, 0.5); overflow-x: auto; border-bottom: 1px solid var(--border); }
-        .quick-actions::-webkit-scrollbar { display: none; }
-        .action-chip { background: var(--bg-color); color: var(--text-main); border: 1px solid var(--border); padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
-        .action-chip:hover { background: var(--primary); border-color: var(--primary); color: #fff; }
+        /* Atalhos Rápidos Fintech */
+        .actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px 16px; }
+        .action-btn { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 16px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: all 0.25s ease; color: #334155; font-size: 0.75rem; font-weight: 500; }
+        .action-btn:hover { background: #f1f5f9; border-color: #cbd5e1; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .action-icon { font-size: 1.4rem; }
 
-        /* Área de Chat / Extrato */
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
-        .message { max-width: 85%; padding: 12px 16px; border-radius: 12px; line-height: 1.4; word-wrap: break-word; white-space: pre-wrap; font-size: 0.95rem; }
-        .message.user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .message.ai { background: #334155; color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #475569; }
-        .loading { font-style: italic; color: var(--text-muted); align-self: flex-start; font-size: 0.85rem; padding: 5px 10px; }
+        /* Área central limpa */
+        .welcome-box { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; color: #64748b; gap: 10px; }
+        .welcome-box p { font-size: 0.85rem; max-width: 260px; line-height: 1.4; }
 
-        /* Rodapé / Input */
-        .chat-input-area { display: flex; padding: 15px; background: #0f172a; border-top: 1px solid var(--border); gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 12px 15px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; outline: none; color: var(--text-main); font-size: 0.95rem; }
-        .chat-input-area input:focus { border-color: var(--primary); }
-        .chat-input-area button { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-        .chat-input-area button:hover { background: var(--primary-dark); }
+        /* Rodapé de Envio Rápido */
+        .app-footer { display: flex; padding: 16px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border-top: 1px solid #f1f5f9; gap: 10px; }
+        .app-footer input { flex: 1; background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px 16px; border-radius: 14px; color: #1e293b; outline: none; font-size: 0.88rem; transition: border-color 0.2s; }
+        .app-footer input:focus { border-color: #6366f1; }
+        .app-footer button { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; border: none; padding: 0 18px; border-radius: 14px; cursor: pointer; font-weight: 700; font-size: 0.88rem; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); transition: opacity 0.2s; }
+        .app-footer button:hover { opacity: 0.9; }
+
+        /* Modals Modernos */
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
+        .modal-box { background: #ffffff; width: 90%; max-width: 360px; max-height: 80vh; padding: 26px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 25px 50px rgba(0,0,0,0.15); display: flex; flex-direction: column; gap: 16px; color: #1e293b; }
+        .modal-box h3 { font-size: 1.15rem; color: #0f172a; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+        .modal-box label { font-size: 0.78rem; color: #64748b; font-weight: 500; }
+        .modal-box input { background: #f8fafc; border: 1px solid #cbd5e1; padding: 14px; border-radius: 14px; color: #1e293b; font-size: 1rem; outline: none; }
+        .modal-box input:focus { border-color: #6366f1; }
+        .modal-actions { display: flex; gap: 12px; margin-top: 6px; }
+        .modal-actions button { flex: 1; padding: 12px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+        .btn-cancel { background: #f1f5f9; color: #475569; }
+        .btn-send { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+
+        /* Lista de Extrato no Modal */
+        .extrato-list { overflow-y: auto; max-height: 320px; display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+        .transaction-card { background: #f8fafc; padding: 12px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; border-left: 4px solid #3b82f6; }
+        .t-desc h4 { font-size: 0.85rem; color: #1e293b; font-weight: 600; margin-bottom: 2px; }
+        .t-desc span { font-size: 0.68rem; color: #64748b; }
+        .t-val { font-weight: 700; font-size: 0.9rem; }
+        .receita { color: #10b981; }
+        .despesa { color: #ef4444; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <!-- Header -->
-    <div class="app-header">
-        <div class="user-info">
-            <h2>Olá, Laércio 👋</h2>
-            <p>Conta Inteligente</p>
+<div class="phone-frame">
+    <!-- Topbar -->
+    <div class="app-topbar">
+        <div class="user-profile">
+            <div class="avatar">L</div>
+            <div class="user-info">
+                <h3>Laércio Lima</h3>
+                <span>LaLáBank Corrente</span>
+            </div>
         </div>
-        <div class="badge-ai">Gemini AI Ativo</div>
+        <div class="account-badge">Light Edition</div>
     </div>
 
-    <!-- Atalhos Rápidos para Comandos -->
-    <div class="quick-actions">
-        <div class="action-chip" onclick="enviarAtalho('Cadastre uma receita de salário no valor de 5000')">➕ Salário R$ 5000</div>
-        <div class="action-chip" onclick="enviarAtalho('Cadastre uma despesa de supermercado no valor de 150')">🛒 Supermercado R$ 150</div>
-        <div class="action-chip" onclick="enviarAtalho('Liste todas as minhas transacoes')">📋 Listar Extrato</div>
+    <!-- Card de Saldo -->
+    <div class="account-card">
+        <div class="balance-header">
+            <span>Saldo Disponível</span>
+            <span>🔒 Protegido</span>
+        </div>
+        <div class="balance-value" id="saldo-atual">R$ 0,00</div>
+        <div class="account-details">
+            <span>Agência: <b>0001</b></span>
+            <span>Conta: <b>84729-1</b></span>
+        </div>
     </div>
 
-    <!-- Mensagens -->
-    <div id="chatMessages" class="chat-messages">
-        <div class="message ai">Olá! Sou seu assistente financeiro virtual. Como posso ajudar com suas finanças hoje? Use os atalhos acima ou digite o que deseja.</div>
+    <!-- Atalhos Fintech -->
+    <div class="actions-grid">
+        <button class="action-btn" onclick="abrirModalPix()">
+            <span class="action-icon">⚡</span>
+            <span>Pix / Enviar</span>
+        </button>
+        <button class="action-btn" onclick="abrirModalReceber()">
+            <span class="action-icon">💰</span>
+            <span>Depositar</span>
+        </button>
+        <button class="action-btn" onclick="abrirModalPagar()">
+            <span class="action-icon">🧾</span>
+            <span>Pagar Conta</span>
+        </button>
+        <button class="action-btn" onclick="abrirModalExtrato()">
+            <span class="action-icon">📄</span>
+            <span>Extrato</span>
+        </button>
     </div>
 
-    <!-- Input -->
-    <div class="chat-input-area">
-        <input type="text" id="userInput" placeholder="Digite um comando (ex: Gastei 50 com almoço)..." autofocus onkeypress="handleKeyPress(event)">
-        <button onclick="enviarMensagem()">Enviar</button>
+    <!-- Tela Inicial Limpa -->
+    <div class="welcome-box">
+        <div style="font-size: 2.5rem;">💎</div>
+        <h4 style="color: #334155; font-weight: 600;">Bem-vindo ao LaLáBank</h4>
+        <p>Utilize os atalhos acima ou digite transações rapidamente na barra inferior.</p>
+    </div>
+
+    <!-- Rodapé inteligente -->
+    <div class="app-footer">
+        <input type="text" id="user-input" placeholder="Ex: Gastei 45 no almoço..." onkeypress="if(event.key === 'Enter') enviarComandoLivre()">
+        <button onclick="enviarComandoLivre()">Enviar</button>
+    </div>
+
+    <!-- Modal de Operações (Pix, Depósito, Pagar) -->
+    <div class="modal-overlay" id="bancoModal">
+        <div class="modal-box">
+            <h3 id="modalTitulo">Operação Bancária</h3>
+            <label id="labelDescricao">Destinatário</label>
+            <input type="text" id="modalDescricao" placeholder="Digite a descrição...">
+            <label>Valor (R$)</label>
+            <input type="number" step="0.01" id="modalValor" placeholder="0.00">
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-send" onclick="executarOperacaoModal()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Extrato -->
+    <div class="modal-overlay" id="extratoModal">
+        <div class="modal-box" style="max-width: 380px;">
+            <h3>
+                <span>📄 Extrato Bancário</span>
+                <span style="font-size: 0.8rem; color: #6366f1; cursor: pointer;" onclick="carregarExtratoModal()">Atualizar</span>
+            </h3>
+            <div class="extrato-list" id="lista-transacoes">
+                <div style="color: #64748b; font-size: 0.8rem; text-align: center; padding: 20px;">A carregar extrato...</div>
+            </div>
+            <div class="modal-actions" style="margin-top: 10px;">
+                <button class="btn-cancel" onclick="fecharModalExtrato()">Fechar</button>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    function enviarAtalho(texto) {
-        document.getElementById('userInput').value = texto;
-        enviarMensagem();
+    const API_URL = '/api/orcamento';
+    let acaoAtual = 'PIX';
+
+    window.onload = function() {
+        atualizarSaldoBanco();
+    };
+
+    function abrirModalPix() {
+        acaoAtual = 'PIX';
+        document.getElementById('modalTitulo').innerText = '⚡ Enviar Pix';
+        document.getElementById('labelDescricao').innerText = 'Chave Pix ou Destinatário';
+        document.getElementById('modalDescricao').value = 'Pix enviado para ';
+        document.getElementById('modalValor').value = '';
+        document.getElementById('bancoModal').style.display = 'flex';
+        document.getElementById('modalValor').focus();
     }
 
-    async function enviarMensagem() {
-        const input = document.getElementById('userInput');
-        const mensagem = input.value.trim();
-        if (!mensagem) return;
+    function abrirModalReceber() {
+        acaoAtual = 'RECEBER';
+        document.getElementById('modalTitulo').innerText = '💰 Depositar Dinheiro';
+        document.getElementById('labelDescricao').innerText = 'Origem / Remetente';
+        document.getElementById('modalDescricao').value = 'Depósito / Pix recebido';
+        document.getElementById('modalValor').value = '';
+        document.getElementById('bancoModal').style.display = 'flex';
+        document.getElementById('modalValor').focus();
+    }
 
-        const chatMessages = document.getElementById('chatMessages');
+    function abrirModalPagar() {
+        acaoAtual = 'PAGAR';
+        document.getElementById('modalTitulo').innerText = '🧾 Pagar Conta';
+        document.getElementById('labelDescricao').innerText = 'Concessionária ou Convênio';
+        document.getElementById('modalDescricao').value = 'Pagamento: ';
+        document.getElementById('modalValor').value = '';
+        document.getElementById('bancoModal').style.display = 'flex';
+        document.getElementById('modalValor').focus();
+    }
 
-        // Mensagem do usuário
-        const userDiv = document.createElement('div');
-        userDiv.className = 'message user';
-        userDiv.textContent = mensagem;
-        chatMessages.appendChild(userDiv);
+    function abrirModalExtrato() {
+        document.getElementById('extratoModal').style.display = 'flex';
+        carregarExtratoModal();
+    }
 
-        input.value = '';
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+    function fecharModal() {
+        document.getElementById('bancoModal').style.display = 'none';
+    }
 
-        // Loading
-        const loadingDiv = document.createElement('div');
-        loadingDiv.className = 'loading';
-        loadingDiv.id = 'loadingIndicator';
-        loadingDiv.textContent = 'Processando transação com IA...';
-        chatMessages.appendChild(loadingDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+    function fecharModalExtrato() {
+        document.getElementById('extratoModal').style.display = 'none';
+    }
 
-        try {
-            const response = await fetch(`/api/orcamento/comando?mensagem=${encodeURIComponent(mensagem)}`, {
-                method: 'POST'
-            });
-            const respostaTexto = await response.text();
+    async function executarOperacaoModal() {
+        const desc = document.getElementById('modalDescricao').value;
+        const val = document.getElementById('modalValor').value;
 
-            document.getElementById('loadingIndicator').remove();
-
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'message ai';
-            aiDiv.textContent = respostaTexto;
-            chatMessages.appendChild(aiDiv);
-        } catch (error) {
-            document.getElementById('loadingIndicator').remove();
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'message ai';
-            errorDiv.style.color = '#f87171';
-            errorDiv.textContent = 'Erro ao processar requisição na API.';
-            chatMessages.appendChild(errorDiv);
+        if (!desc || !val || val <= 0) {
+            alert('Informe uma descrição e um valor válido.');
+            return;
         }
 
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        fecharModal();
+        let comandoFinal = `${desc} no valor de ${val}`;
+        if (acaoAtual === 'PIX' || acaoAtual === 'PAGAR') {
+            comandoFinal = `Paguei ${desc} no valor de ${val}`;
+        }
+
+        await enviarRequisicaoServidor(comandoFinal);
     }
 
-    function handleKeyPress(event) {
-        if (event.key === 'Enter') {
-            enviarMensagem();
+    async function enviarComandoLivre() {
+        const input = document.getElementById('user-input');
+        const texto = input.value;
+        if (!texto.trim()) return;
+        input.value = '';
+        await enviarRequisicaoServidor(texto);
+    }
+
+    async function enviarRequisicaoServidor(texto) {
+        try {
+            const response = await fetch(`${API_URL}/comando`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ texto: texto })
+            });
+
+            // Validação de saldo insuficiente vinda do backend
+            if (!response.ok) {
+                const mensagemErro = await response.text();
+                alert("❌ Operação Negada: " + mensagemErro);
+                return;
+            }
+
+            atualizarSaldoBanco();
+        } catch (error) {
+            console.error('Erro na requisição:', error);
+            alert('Erro de conexão com o servidor.');
+        }
+    }
+
+    async function carregarExtratoModal() {
+        try {
+            const response = await fetch(`${API_URL}/transacoes`);
+            const transacoes = await response.json();
+
+            const container = document.getElementById('lista-transacoes');
+            container.innerHTML = '';
+
+            if (transacoes.length === 0) {
+                container.innerHTML = `<div style="color: #64748b; font-size: 0.8rem; text-align: center; padding: 20px;">Nenhuma movimentação registada.</div>`;
+                return;
+            }
+
+            transacoes.reverse().forEach(t => {
+                const isReceita = t.tipo === 'RECEITA';
+                const classeValor = isReceita ? 'receita' : 'despesa';
+                const sinal = isReceita ? '+ ' : '- ';
+                const valorFmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(t.valor);
+
+                const itemHTML = `
+                        <div class="transaction-card" style="border-left-color: ${isReceita ? '#10b981' : '#ef4444'};">
+                            <div class="t-desc">
+                                <h4>${t.descricao}</h4>
+                                <span>${t.data}</span>
+                            </div>
+                            <div class="t-val ${classeValor}">
+                                ${sinal}${valorFmt}
+                            </div>
+                        </div>
+                    `;
+                container.insertAdjacentHTML('beforeend', itemHTML);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar extrato:', error);
+        }
+    }
+
+    async function atualizarSaldoBanco() {
+        try {
+            const response = await fetch(`${API_URL}/saldo`);
+            const saldo = await response.json();
+            const saldoFmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(saldo);
+
+            const elem = document.getElementById('saldo-atual');
+            elem.innerText = saldoFmt;
+        } catch (error) {
+            console.error('Erro ao atualizar saldo:', error);
         }
     }
 </script>

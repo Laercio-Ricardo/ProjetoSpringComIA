@@ -13,33 +13,22 @@ java {
 	}
 }
 
+
 repositories {
 	mavenCentral()
-}
-
-ext {
-	set('springAiVersion', '2.0.1')
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	// Dependência atualizada para o Google Gemini (Gratuito via Google AI Studio)
-	implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
+	// Substitui o H2 pelo PostgreSQL
+	runtimeOnly 'org.postgresql:postgresql'
 
-	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-	}
-}
-
 tasks.named('test') {
 	useTestPlatform()
 }

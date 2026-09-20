@@ -18,17 +18,39 @@ public class TransacaoService {
         this.repository = repository;
     }
 
-    // Método para salvar uma nova transação
-    public Transacao salvarTransacao(String descricao, BigDecimal valor, String tipo, LocalDate data) {
+    public Transacao salvar(String descricao, BigDecimal valor, String tipo) {
         TipoTransacao tipoEnum = TipoTransacao.valueOf(tipo.toUpperCase());
-        LocalDate dataTransacao = (data != null) ? data : LocalDate.now();
 
-        Transacao transacao = new Transacao(descricao, valor, tipoEnum, dataTransacao);
+        // VALIDAÇÃO DE SALDO: Se for despesa, verifica se há saldo suficiente
+        if (tipoEnum == TipoTransacao.DESPESA) {
+            BigDecimal saldoAtual = calcularSaldo();
+            if (valor.compareTo(saldoAtual) > 0) {
+                throw new RuntimeException("Saldo insuficiente! Você não possui saldo disponível para esta operação.");
+            }
+        }
+
+        Transacao transacao = new Transacao();
+        transacao.setDescricao(descricao);
+        transacao.setValor(valor);
+        transacao.setTipo(tipoEnum);
+        transacao.setData(LocalDate.now());
         return repository.save(transacao);
     }
 
-    // Método para listar todas as transações cadastradas
-    public List<Transacao> listarTransacoes() {
+    public List<Transacao> listarTodas() {
         return repository.findAll();
+    }
+
+    public BigDecimal calcularSaldo() {
+        List<Transacao> transacoes = repository.findAll();
+        BigDecimal saldo = BigDecimal.ZERO;
+        for (Transacao t : transacoes) {
+            if (t.getTipo() == TipoTransacao.RECEITA) {
+                saldo = saldo.add(t.getValor());
+            } else {
+                saldo = saldo.subtract(t.getValor());
+            }
+        }
+        return saldo;
     }
 }
